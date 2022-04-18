@@ -1,0 +1,6 @@
+- Update npm and fix deprecated packages issue
+- Add authentication to betting service post routes
+- Finish docker-compose file
+- Add golang test to game service
+- Clean up server file in game service
+        

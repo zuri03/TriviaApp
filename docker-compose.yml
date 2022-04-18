@@ -1,0 +1,12 @@
+version: '3'
+services:
+  blockchain:
+    image: trufflesuite/ganache-cli:lastest
+    ports:
+      - '7545:7545'
+  betting:
+    image: jeopardy/web
+    build: ./services/web
+    ports:
+      - '8000:8000'
+  
