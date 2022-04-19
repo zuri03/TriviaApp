@@ -1,12 +1,15 @@
 version: '3'
 services:
   blockchain:
-    image: trufflesuite/ganache-cli:lastest
+    image: trufflesuite/ganache-cli:latest
     ports:
-      - '7545:7545'
+      - '8545:8545'
   betting:
-    image: jeopardy/web
-    build: ./services/web
+    image: jeopardy/betting
+    build: ./services/betting
+    depends_on:
+      blockchain:
+        condition: service_started
     ports:
       - '8000:8000'
   

@@ -23,6 +23,7 @@ ENV PATH /usr/src/app/node_modules/.bin:$PATH
 # add app
 COPY . ./
 
+#RUN npm install -g ganache-cli
 #RUN truffle deploy
 EXPOSE 8000
 
