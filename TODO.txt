@@ -3,4 +3,9 @@
 - Finish docker-compose file
 - Add golang test to game service
 - Clean up server file in game service
+
+ blockchain:
+    image: trufflesuite/ganache-cli:latest
+    ports:
+      - '8545:8545'
         

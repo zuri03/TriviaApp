@@ -25,15 +25,13 @@ dotenv.config();
 const Web3 = require('web3');
 const express = require('express');
 const cors = require('cors');
-//const ganache = require('ganache-core');
 const { abi } = require('../build/contracts/Pot.json');
-console.log(abi)
 
 //const web3 = new Web3(new Web3.providers.WebsocketProvider('ws://localhost:7545'));
 //const web3 = new Web3(new Web3.providers.WebsocketProvider('ws://127.0.0.1:7545'));
 //const web3 = new Web3(new Web3.providers.WebsocketProvider('ws://blockchain:7545'));
-const web3 = new Web3(new Web3.providers.WebsocketProvider('ws://0.0.0.0:8545'));
-//const web3 = new Web3(new Web3.providers.WebsocketProvider('ws://blockchain:8545'));
+//const web3 = new Web3(new Web3.providers.WebsocketProvider('ws://0.0.0.0:8545'));
+const web3 = new Web3(new Web3.providers.WebsocketProvider('ws://blockchain:8545'));
 
 const address = process.env.POT_CONTRACT_ADDRESS;
 
@@ -50,15 +48,16 @@ module.exports = async function () {
             });
         });
     };
-
+    
     const owner = await getAccount(0);
     const port = process.env.PORT;
     const contract = new web3.eth.Contract(abi, address, { from: owner });
     const app = express();
 
+    
     app.use(express.urlencoded());
     app.use(cors());
-    
+
     app.get("*/:address", (req, res, next) => {
         console.log("got get dynamic url request");
         var address = req.params.address;
