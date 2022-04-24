@@ -15,14 +15,13 @@ RUN pip3 install --no-cache --upgrade pip setuptools
 COPY package*.json ./
 #COPY package-lock.json ./
 COPY ./.env ./
-COPY truffle-config.js ./
+#COPY truffle-config.js ./
 RUN npm install 
 
 ENV PATH /usr/src/app/node_modules/.bin:$PATH
 
 # add app
-COPY . ./
-
+COPY . .
 #RUN npm install -g ganache-cli
 #RUN truffle deploy
 EXPOSE 8000

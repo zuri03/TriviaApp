@@ -22,34 +22,15 @@ import express from 'express';
 
 const dotenv = require("dotenv");
 dotenv.config();
-const Web3 = require('web3');
 const express = require('express');
 const cors = require('cors');
-const { abi } = require('../build/contracts/Pot.json');
 
-//const web3 = new Web3(new Web3.providers.WebsocketProvider('ws://localhost:7545'));
-//const web3 = new Web3(new Web3.providers.WebsocketProvider('ws://127.0.0.1:7545'));
-//const web3 = new Web3(new Web3.providers.WebsocketProvider('ws://blockchain:7545'));
-//const web3 = new Web3(new Web3.providers.WebsocketProvider('ws://0.0.0.0:8545'));
-const web3 = new Web3(new Web3.providers.WebsocketProvider('ws://blockchain:8545'));
+module.exports = async function (owner, web3) {
 
-const address = process.env.POT_CONTRACT_ADDRESS;
-
-module.exports = async function () {
+    const { abi } = require('../build/Pot.json');
+    const abi = "abi";
+    const address = process.env.POT_CONTRACT_ADDRESS;
     
-    const getAccount = function (idx) {
-        return new Promise((resolve, reject) => {
-            web3.eth.getAccounts((err, accounts) => {
-                if (err === null) {
-                    resolve(accounts[idx]);
-                } else {
-                    reject(err);
-                }
-            });
-        });
-    };
-    
-    const owner = await getAccount(0);
     const port = process.env.PORT;
     const contract = new web3.eth.Contract(abi, address, { from: owner });
     const app = express();
@@ -190,4 +171,5 @@ module.exports = async function () {
     app.listen(port, () => {
       return console.log(`Express is listening at http://localhost:${port}`);
     });
+    
 }

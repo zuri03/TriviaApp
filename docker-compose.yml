@@ -1,28 +1,18 @@
 version: '3'
 services:
-  blockchain:
-    image: ganache
-    build: './ganache'
-    ports:
-      - '8545:8545'
   betting:
     image: trivia/betting
-    build: ./services/betting
+    build: './services/betting'
     ports:
       - '8000:8000'
     depends_on:
       blockchain:
         condition: service_started
-  game:
-    image: trivia/game
-    build: './services/game'
+  blockchain:
+    image: ganache
+    build: './ganache'
     ports:
-      - '8080:8080'
-  web:
-    image: trivia/web
-    build: './services/web'
-    ports:
-      - '3000:3000'
-      
+      - '8545:8545'
+ 
 
   

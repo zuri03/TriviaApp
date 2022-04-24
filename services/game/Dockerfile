@@ -1,10 +1,9 @@
 FROM golang:1.17 as builder
 WORKDIR /go/src/github.com/zuri03/TriviaApp/
-COPY ./ ./
-COPY ./go.mod ./go.mod
-COPY ./go.sum ./go.sum
+COPY ./go.mod ./
+COPY ./go.sum ./
+COPY ./services/game/ ./services/game
 RUN CGO_ENABLED=0 go build -o  build/Game ./services/game/main.go
-
 FROM alpine:latest  
 RUN apk --no-cache add ca-certificates
 
