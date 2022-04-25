@@ -21,3 +21,23 @@
     build: './services/web'
     ports:
       - '3000:3000'
+
+
+      {(phase === 1 ? 
+          <div>
+            <button type="button" style={{width: '10%'}} className="btn btn-primary" data-toggle="modal" data-target={`#${modalId}`}>
+              Place Bet
+            </button>
+            <RewardsButton />
+          </div>
+          : 
+          <div className="input-group mb-3">
+            <form style={{width: '70%'}} onSubmit={storeAnswer}>
+              <div className='d-flex flex-row justify-content-center'>
+                <span className="input-group-text" id="inputGroup-sizing-sm">Answer</span>
+                <input type="text" className="form-control" name="answer"  value={playerAnswer} onChange={onChange} aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" />
+                <button type="submit">Submit</button>
+              </div>
+            </form>
+          </div>
+        )}

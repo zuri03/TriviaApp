@@ -68,15 +68,15 @@ export default function App() : JSX.Element {
   const modalId = "betting-modal";
 
   return (
-    <div className="vh-100 vw-100 p-4" id="container" style={{width: '100vw'}}>
+    <div className=" pl-2 pt-2 pr-2" id="container" style={{width: '100%', height: '100vh'}}>
       <BettingModal id={modalId} />
-      <div className="row" style={{height: '95%'}}>
+      <div className="row" style={{height: '90%', width: '100%'}}>
         <div className="col-9">
           <div className="card"> 
             {question}
           </div>
           <div className="card"> 
-            {playerAnswer}
+            Current Answer: {playerAnswer}
           </div>
         </div>
         <div className="col h-100">
@@ -95,25 +95,22 @@ export default function App() : JSX.Element {
           </div>
         </div>
       </div>
-      <div className="d-flex flex-row justify-content-space-betweeen" style={{backgroundColor: 'rgb(11, 32, 66)'}}>
-        {(phase === 1 ? 
-          <div>
-            <button type="button" style={{width: '10%'}} className="btn btn-primary" data-toggle="modal" data-target={`#${modalId}`}>
-              Place Bet
-            </button>
-            <RewardsButton />
-          </div>
-          : 
-          <div className="input-group mb-3">
-            <form style={{width: '70%'}} onSubmit={storeAnswer}>
-              <div className='d-flex flex-row justify-content-center'>
-                <span className="input-group-text" id="inputGroup-sizing-sm">Answer</span>
-                <input type="text" className="form-control" name="answer"  value={playerAnswer} onChange={onChange} aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" />
-                <button type="submit">Submit</button>
-              </div>
-            </form>
-          </div>
-        )}
+      <div className="d-flex flex-row justify-content-space-betweeen p-2" style={{backgroundColor: 'rgb(11, 32, 66)'}}>
+        <div className="input-group mb-3">
+          <form style={{width: '70%'}} onSubmit={storeAnswer}>
+            <div className='d-flex flex-row justify-content-center'>
+              <span className="input-group-text" id="inputGroup-sizing-sm">Answer</span>
+              <input type="text" className="form-control" name="answer"  value={playerAnswer} onChange={onChange} aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" />
+              <button type="submit" className='m-1 btn btn-primary'>Submit</button>
+            </div>
+          </form>
+        </div>
+        <div className="d-flex flex-row justify-content-space-between">
+          <button type="button"  className="m-1 btn btn-primary" data-toggle="modal" data-target={`#${modalId}`}>
+            Place Bet
+          </button>
+          <RewardsButton />
+        </div> 
       </div>
     </div>
   );

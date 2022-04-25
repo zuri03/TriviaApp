@@ -16,7 +16,7 @@ export default function RewardsButton() : JSX.Element {
     }
   }
   return (
-    <button onClick={collectRewards}>
+    <button className="m-1 btn btn-danger" onClick={collectRewards}>
       Collect Rewards
     </button>
   );
