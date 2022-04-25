@@ -85,18 +85,13 @@ func initServer(g *game) {
 			return
 		}
 
-		/*
-			if playerAnswer.Answer == g.currentState.Answer {
-				g.bettingPotClient.declareWinner(playerAnswer.Address)
+		if playerAnswer.Answer == g.currentState.Answer {
+			result, err := g.bettingPotClient.declareWinner(playerAnswer.Address)
+			if err != nil {
+				fmt.Printf("betting service error => %s\n", err.Error())
+			} else {
+				fmt.Printf("results => %s\n", result)
 			}
-		*/
-
-		//Remove this line after development
-		result, err := g.bettingPotClient.declareWinner(playerAnswer.Address)
-		if err != nil {
-			fmt.Printf("betting service error => %s\n", err.Error())
-		} else {
-			fmt.Printf("results => %s\n", result)
 		}
 
 		respObj := struct {

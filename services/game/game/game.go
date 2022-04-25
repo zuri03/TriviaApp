@@ -36,6 +36,7 @@ type game struct {
 	jserviceClient   jservice
 	bettingPotClient bettingPot
 	currentState     state
+	Termination      chan uint8
 }
 
 type observer struct {
@@ -105,7 +106,7 @@ func (g *game) startPostRound() (phase, error) {
 	return BETTING, nil
 }
 
-func InitGame() {
+func InitGame() *game {
 	game := game{
 		observers:      make([]observer, 0),
 		jserviceClient: jservice{Client: http.Client{}},
@@ -114,9 +115,11 @@ func InitGame() {
 			Question: "",
 			Answer:   "",
 		},
+		Termination: make(chan uint8),
 	}
 	defer game.run() //may have to run this in a seperate go routine
 	initServer(&game)
+	return &game
 }
 
 //Run function always assumes it is called when game has been stopped

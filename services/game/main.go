@@ -1,12 +1,17 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/zuri03/TriviaApp/services/game/game"
 )
 
 func main() {
-	game.InitGame()
-	for {
-
+	game := game.InitGame()
+	val := <-game.Termination
+	if val == 0 {
+		fmt.Printf("Graceful Shutdown")
+	} else {
+		fmt.Printf("Error has occured shutting down")
 	}
 }

@@ -32,13 +32,14 @@ func preGameActions(signaler chan int8, g *game) {
 
 func bettingActions(signaler chan int8) {
 	fmt.Printf("starting betting \n")
-	time.Sleep(time.Duration(5000000000)) //Replace after development
+	time.Sleep(time.Duration(BETTTING_DURATION)) //Replace after development
 	signaler <- 1
 	return
 }
 
 func roundOngoingActions(signaler chan int8) {
-	time.Sleep(time.Duration(5000000000))
+	fmt.Printf("starting round \n")
+	time.Sleep(time.Duration(ROUND_DURATION))
 	signaler <- 1
 	return
 }

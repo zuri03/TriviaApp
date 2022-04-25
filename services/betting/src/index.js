@@ -1,13 +1,13 @@
 const fs = require("fs-extra");
 const path = require("path");
 const solc = require("solc");
-const { stringify } = require('flatted');
+//const { stringify } = require('flatted');
 const Web3 = require('web3');
 const web3 = new Web3(new Web3.providers.WebsocketProvider('ws://blockchain:8545'));
 const server = require('./server/server.js');
 
 const compile = function () {
-    const contract = path.resolve(__dirname,"./contracts","Pot.sol");
+    const contract = path.resolve(__dirname,"../contracts","Pot.sol");
     const source = fs.readFileSync(contract, "utf8");
 
     var input = {

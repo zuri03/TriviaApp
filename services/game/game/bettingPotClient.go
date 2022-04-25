@@ -14,7 +14,7 @@ func (bettingPot *bettingPot) declareWinner(address string) (string, error) {
 	data := url.Values{}
 	data.Set("address", address)
 
-	req, err := http.NewRequest("POST", "http://localhost:8000/winner", strings.NewReader(data.Encode()))
+	req, err := http.NewRequest("POST", "http://betting:8000/winner", strings.NewReader(data.Encode()))
 	if err != nil {
 		return "", err
 	}

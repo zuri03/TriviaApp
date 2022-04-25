@@ -10,7 +10,7 @@ services:
         condition: service_started
   blockchain:
     image: ganache
-    build: './ganache'
+    build: './services/ganache'
     ports:
       - '8545:8545'
   game:

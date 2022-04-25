@@ -1,18 +1,5 @@
 //Endpoints
 /*
-Endpoints:
-    - Submit: Provides clients the ability to declar a player as correct 
-        - this triggers a function on the contract to move the players funds out of the betting map and into the rewards map
-        - add measures to protect this endpoint and ensure the only internal services can call it 
-        - this only moves funds from the betting map to the rewards map it is up to the player to pull their rewards from the contract
-    
-    - Bet: Provides clients the ability to add funds to a player's current bet or create a new entry in the betting map
-        - accepts player account address and an amount (for now this amount will simply be a number)
-
-    - Get rewards: A post request that allows clients to call a function on the contract to send user rewards to their accounts
-        - accepts player account address 
-
-
 import dotenv from "dotenv";
 dotenv.config();
 import Web3 from 'web3';
