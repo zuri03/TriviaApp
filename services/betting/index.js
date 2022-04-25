@@ -4,60 +4,36 @@ const solc = require("solc");
 const { stringify } = require('flatted');
 const Web3 = require('web3');
 const web3 = new Web3(new Web3.providers.WebsocketProvider('ws://blockchain:8545'));
-//const server = require('./server/server.js');
+const server = require('./server/server.js');
 
 const compile = function () {
-    const buildFolder = path.resolve(__dirname,"./build");
-    fs.removeSync(buildFolder);
-
     const contract = path.resolve(__dirname,"./contracts","Pot.sol");
     const source = fs.readFileSync(contract, "utf8");
 
     var input = {
         language: 'Solidity',
         sources: {
-            'Pot.sol': {
-                content: source
-            }
+            'Pot.sol': { content: source }
         },
         settings: {
             outputSelection: {
-                '*': {
-                    '*': ['*']
-                }
+                '*': { '*': ['*'] }
             }
         }
     };
 
     const output = JSON.parse(solc.compile(JSON.stringify(input)));
-    fs.ensureDirSync(buildFolder);
-    fs.outputJSONSync(path.resolve(buildFolder, "Pot"+".json"), output.contracts['Pot.sol']['Pot']);
+    return output.contracts['Pot.sol']['Pot'];
 };
 
-const deploy = async (owner) => {
-    try {
-        const json = fs.readFileSync(path.resolve(__dirname,"./build","Pot.json"), "utf8");
-        let obj = JSON.parse(json);
-        //console.log(JSON.stringify(obj.evm.bytecode.object))
-        /*
-        console.log(JSON.stringify(obj))
-        console.log("============================================================================ evm ==============================================================================================")
-        console.log(JSON.stringify(obj.evm))
-        console.log("============================================================================ bytcode ==============================================================================================")
-        console.log(JSON.stringify(obj.evm.bytecode))
-        console.log("============================================================================ object ==============================================================================================")
-        console.log(JSON.stringify(obj.evm.bytecode.object))
-        */
-        const result = await new web3.eth.Contract(obj.abi)
-            .deploy({data: obj.evm.bytecode.object})
-            .send({gas: 6721975, from: owner});
-        const serialised = stringify(result.options);
-    
-        return await serialised;
-    } catch (error) {
-        console.error(error);
-        return error;
-    }
+const deploy = async (owner, obj) => {
+    let contract = await new web3.eth.Contract(obj.abi);
+    console.log(`initial address => ${contract.options.address}`)
+
+    let result = await contract.deploy({data: obj.evm.bytecode.object})
+        .send({gas: 6721975, from: owner});
+    contract.options.address = result['_address'];
+    return contract;
 }
 
 var getOwnerAddress = async function () {
@@ -65,11 +41,7 @@ var getOwnerAddress = async function () {
     const getAccount = function () {
         return new Promise((resolve, reject) => {
             web3.eth.getAccounts((err, accounts) => {
-                if (err === null) {
-                    resolve(accounts[0]);
-                } else {
-                    reject(err);
-                }
+                err === null ? resolve(accounts[0]) : reject(err)
             });
         });
     };
@@ -85,18 +57,16 @@ var getOwnerAddress = async function () {
             await new Promise(r => setTimeout(r, 2000));
         } 
     }
-    console.log(`found owner => ${address}`)
     return address;
 };
 
 (async function () {
-    console.log('starting owner')
     const owner = await getOwnerAddress();
     console.log('got owner');
-    compile();
+    const compiledContract = compile();
     console.log('finished compilation')
-    await deploy(owner);
+    const contract = await deploy(owner, compiledContract);
     console.log('finished deploy')
     console.log('starting server')
-    //server(owner, web3)
+    server(owner, web3, contract)
 })();

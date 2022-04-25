@@ -13,6 +13,18 @@ services:
     build: './ganache'
     ports:
       - '8545:8545'
+  game:
+    image: trivia/game
+    build: 
+      context: ./
+      dockerfile: ./services/game/Dockerfile
+    ports:
+      - '8080:8080'
+  web:
+    image: trivia/web
+    build: './services/web'
+    ports:
+      - '3000:3000'
  
 
   

@@ -25,16 +25,10 @@ dotenv.config();
 const express = require('express');
 const cors = require('cors');
 
-module.exports = async function (owner, web3) {
-
-    const { abi } = require('../build/Pot.json');
-    const abi = "abi";
-    const address = process.env.POT_CONTRACT_ADDRESS;
+module.exports = async function (owner, web3, contract) {
     
     const port = process.env.PORT;
-    const contract = new web3.eth.Contract(abi, address, { from: owner });
     const app = express();
-
     
     app.use(express.urlencoded());
     app.use(cors());
