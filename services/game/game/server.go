@@ -41,6 +41,7 @@ func initServer(g *game) {
 		ReadBufferSize:  1024,
 		WriteBufferSize: 1024,
 	}
+
 	//http.Handle("/Question", &Handler{j: jservice{Client: http.Client{}}})
 	http.HandleFunc("/ws", func(writer http.ResponseWriter, req *http.Request) {
 		upgrader.CheckOrigin = func(r *http.Request) bool { return true } //Remove this after development
