@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/zuri03/TriviaApp/services/game/game"
+	"github.com/zuri03/game/game"
 )
 
 func main() {

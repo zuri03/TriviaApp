@@ -1,13 +1,13 @@
 FROM golang:1.17 as builder
-WORKDIR /go/src/github.com/zuri03/TriviaApp/
-COPY ./go.mod ./
-COPY ./go.sum ./
-COPY ./services/game/ ./services/game
-RUN CGO_ENABLED=0 go build -o  build/Game ./services/game/main.go
+WORKDIR /go/src/github.com/zuri03/game/
+
+COPY . .
+
+RUN CGO_ENABLED=0 go build -o  build/Game ./main.go
 FROM alpine:latest  
 RUN apk --no-cache add ca-certificates
 
 WORKDIR /go/src/github.com/zuri03/TriviaApp/
-COPY --from=builder /go/src/github.com/zuri03/TriviaApp/build/Game ./main
+COPY --from=builder /go/src/github.com/zuri03/user/build/Game ./main
 EXPOSE 8080
 ENTRYPOINT [ "./main" ]

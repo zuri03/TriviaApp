@@ -1,0 +1,12 @@
+FROM golang:1.17 as builder
+WORKDIR /go/src/github.com/zuri03/user/
+COPY . .
+
+RUN CGO_ENABLED=0 go build -o  build/User ./main.go
+FROM alpine:latest  
+RUN apk --no-cache add ca-certificates
+
+WORKDIR /go/src/github.com/zuri03/UserService/
+COPY --from=builder /go/src/github.com/zuri03/user/build/User ./main
+EXPOSE 8081
+ENTRYPOINT [ "./main" ]
