@@ -36,7 +36,7 @@ const deploy = async (owner, obj) => {
     return contract;
 }
 
-var getOwnerAddress = async function () {
+const getOwnerAddress = async function () {
     var address;
     const getAccount = function () {
         return new Promise((resolve, reject) => {

@@ -17,24 +17,7 @@ type CreateHandler struct {
 
 func (c *CreateHandler) ServeHTTP(writer http.ResponseWriter, req *http.Request) {
 
-	//Check request header content type
-	//Decode json in body
-	//Ensure username and password does not already exist
-	//create new user object with new id
-	//store new user in redis
-
 	fmt.Println("create user request recieved")
-
-	if req.Header.Get("Content-Type") != "" {
-		value := req.Header.Values("Content-Type")
-		fmt.Printf("value => %s\n", value[0])
-		if value[0] != "application/json" {
-			writer.WriteHeader(http.StatusInternalServerError)
-			//str, _ := json.Marshal(response{Data: "", Error: "Internal Server Error "})
-			//writer.Write(str)
-			return
-		}
-	}
 
 	var userDetails models.UserDetails
 	if err := json.NewDecoder(req.Body).Decode(&userDetails); err != nil {
@@ -52,15 +35,12 @@ func (c *CreateHandler) ServeHTTP(writer http.ResponseWriter, req *http.Request)
 	_, err := c.RedisHandler.JSONGet(key, ".")
 	if err != nil {
 		fmt.Printf("error mess => %s\n", err.Error())
-		fmt.Printf("error == nil ? %b\n", err.Error() == "nil")
-		fmt.Printf("error == empty string ? %b\n", err.Error() == "")
-		/*
-			if err.Error() != "" {
-				writer.WriteHeader(http.StatusInternalServerError)
-				writer.Write([]byte(fmt.Sprintf("Error has occured => %s\n", err.Error())))
-				return
-			}
-		*/
+
+		if err.Error() != "redis: nil" {
+			writer.WriteHeader(http.StatusInternalServerError)
+			writer.Write([]byte(fmt.Sprintf("Error has occured => %s\n", err.Error())))
+			return
+		}
 
 		newUser := &models.User{
 			Id:        uuid.New().String(),
@@ -68,6 +48,7 @@ func (c *CreateHandler) ServeHTTP(writer http.ResponseWriter, req *http.Request)
 			Password:  userDetails.Password,
 			CreatedAt: time.Now().Format("02 Jan 2006 15:04:05"),
 			Role:      "user",
+			Wins:      0,
 		}
 
 		c.RedisHandler.JSONSet(key, ".", newUser)

@@ -6,4 +6,5 @@ type User struct {
 	Password  string `json:"password"`
 	CreatedAt string `json:"created"`
 	Role      string `json:"role"`
+	Wins      uint   `json:"wins"`
 }

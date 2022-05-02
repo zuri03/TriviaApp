@@ -135,16 +135,12 @@ func (g *game) run() {
 			switch nextRound {
 			case 1:
 				nextRound, err = g.startBetting()
-				break
 			case 2:
 				nextRound, err = g.startPreRound()
-				break
 			case 3:
 				nextRound, err = g.startRound()
-				break
 			case 4:
 				nextRound, err = g.startPostRound()
-				break
 			default:
 				//Throw an error here
 			}

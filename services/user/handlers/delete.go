@@ -2,37 +2,35 @@ package handlers
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"fmt"
 	"net/http"
+
+	"github.com/nitishm/go-rejson/v4"
+	"github.com/zuri03/user/models"
 )
 
-type Username struct {
-	Username string `json:"username"`
+type DeleteHandler struct {
+	RedisHandler *rejson.Handler
 }
 
-type DeleteHandler struct{}
-
-func (c *DeleteHandler) ServeHttp(writer http.ResponseWriter, req *http.Request) {
-	writer.Header().Set("Content-Type", "application/json")
-	writer.Header().Set("Access-Control-Allow-Origin", "*")
-	type response struct {
-		Data  string `json:"data"`
-		Error string `json:"error"`
-	}
-
-	if err := req.ParseForm(); err != nil {
+func (d *DeleteHandler) ServeHTTP(writer http.ResponseWriter, req *http.Request) {
+	var userDetails models.UserDetails
+	if err := json.NewDecoder(req.Body).Decode(&userDetails); err != nil {
 		writer.WriteHeader(http.StatusInternalServerError)
-		str, _ := json.Marshal(response{Data: "", Error: "Internal Server Error "})
-		writer.Write(str)
+		writer.Write([]byte("error parsing json"))
 		return
 	}
 
-	defer req.Body.Close()
-	_, err := ioutil.ReadAll(req.Body)
+	key := fmt.Sprintf("%s:%s", userDetails.Username, userDetails.Password)
+
+	result, err := d.RedisHandler.JSONDel(key, ".")
 	if err != nil {
+		fmt.Printf("Error in delete => %s\n", err.Error())
 		writer.WriteHeader(http.StatusInternalServerError)
-		str, _ := json.Marshal(response{Data: "", Error: "Internal Server Error "})
-		writer.Write(str)
+		writer.Write([]byte(fmt.Sprintf("Error has occured => %s\n", err.Error())))
 		return
 	}
+
+	fmt.Printf("type of deletion result %T\n", result)
+	writer.Write([]byte("user deleted"))
 }

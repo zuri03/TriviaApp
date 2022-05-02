@@ -5,32 +5,6 @@
 - Add tests to user service
 - Standardize responses for each service
 - Set up router for user service
- betting:
-    image: trivia/betting
-    build: './services/betting'
-    ports:
-      - '8000:8000'
-    depends_on:
-      blockchain:
-        condition: service_started
-  blockchain:
-    image: ganache
-    build: './services/ganache'
-    ports:
-      - '8545:8545'
-  game:
-    image: trivia/game
-    build: 
-      context: ./services/game
-      dockerfile: ./services/game/Dockerfile
-    ports:
-      - '8080:8080'
-  web:
-    image: trivia/web
-    build: './services/web'
-    ports:
-      - '3000:3000'
-  redis:
-    image: redis:latest
-    ports:
+- Implement graceful shutdown for each service
+
   

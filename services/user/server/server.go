@@ -7,11 +7,10 @@ import (
 
 	"github.com/go-redis/redis/v8"
 	"github.com/nitishm/go-rejson/v4"
-	"github.com/zuri03/user/handlers"
+	"github.com/zuri03/user/router"
 )
 
-func InitServer() {
-
+func InstantiateRedisDBClientHandler() *rejson.Handler {
 	redisJsonHanlder := rejson.NewReJSONHandler()
 
 	fmt.Println("Connecting to reids")
@@ -22,13 +21,22 @@ func InitServer() {
 	})
 	redisJsonHanlder.SetGoRedisClient(redisDBClient)
 	fmt.Println("Connection successfull")
-	http.Handle("/user", &handlers.CreateHandler{RedisHandler: redisJsonHanlder})
+	return redisJsonHanlder
+}
+
+func InitServer() {
+
+	rejsonRedisHandler := InstantiateRedisDBClientHandler()
+
+	userRouter := router.InitRouter(rejsonRedisHandler)
+
+	//http.Handle("/user", &handlers.CreateHandler{RedisHandler: rejsonRedisHandler})
 	go func() {
-		err := http.ListenAndServe(":8081", nil)
+		err := http.ListenAndServe(":8081", userRouter)
 		if err != nil {
 			log.Fatalf("Error occured initializing server: %s\n", err.Error())
 			return
 		}
-		fmt.Printf("Listening on port 8080 \n")
+		fmt.Printf("Listening on port 8081 \n")
 	}()
 }
