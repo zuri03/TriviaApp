@@ -3,18 +3,21 @@ package router
 import (
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/nitishm/go-rejson/v4"
 	"github.com/zuri03/user/handlers"
 )
 
-func InitRouter(redisJson *rejson.Handler) *http.ServeMux {
+func InitRouter(redisJson *rejson.Handler, signaler chan os.Signal) *http.ServeMux {
 
 	router := http.NewServeMux()
 
-	createHandler := handlers.CreateHandler{RedisHandler: redisJson}
-	getHandler := handlers.GetHandler{RedisHandler: redisJson}
-	deleteHandler := handlers.DeleteHandler{RedisHandler: redisJson}
+	fmt.Printf("signaler == nil? %t\n", signaler == nil)
+	createHandler := handlers.CreateHandler{RedisHandler: redisJson, Signaler: signaler}
+	getHandler := handlers.GetHandler{RedisHandler: redisJson, Signaler: signaler}
+	deleteHandler := handlers.DeleteHandler{RedisHandler: redisJson, Signaler: signaler}
+	updateHandler := handlers.UpdateHandler{RedisHandler: redisJson, Signaler: signaler}
 
 	router.HandleFunc("/user", func(writer http.ResponseWriter, req *http.Request) {
 
@@ -35,6 +38,8 @@ func InitRouter(redisJson *rejson.Handler) *http.ServeMux {
 			createHandler.ServeHTTP(writer, req)
 		case http.MethodDelete:
 			deleteHandler.ServeHTTP(writer, req)
+		case http.MethodPut:
+			updateHandler.ServeHTTP(writer, req)
 		default:
 			writer.WriteHeader(http.StatusMethodNotAllowed)
 			writer.Write([]byte("Method not allowed"))

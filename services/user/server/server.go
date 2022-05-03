@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/go-redis/redis/v8"
 	"github.com/nitishm/go-rejson/v4"
@@ -24,11 +25,11 @@ func InstantiateRedisDBClientHandler() *rejson.Handler {
 	return redisJsonHanlder
 }
 
-func InitServer() {
+func InitServer(signaler chan os.Signal) {
 
 	rejsonRedisHandler := InstantiateRedisDBClientHandler()
 
-	userRouter := router.InitRouter(rejsonRedisHandler)
+	userRouter := router.InitRouter(rejsonRedisHandler, signaler)
 
 	//http.Handle("/user", &handlers.CreateHandler{RedisHandler: rejsonRedisHandler})
 	go func() {
@@ -39,4 +40,5 @@ func InitServer() {
 		}
 		fmt.Printf("Listening on port 8081 \n")
 	}()
+
 }

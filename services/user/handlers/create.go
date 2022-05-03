@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/google/uuid"
@@ -13,6 +14,7 @@ import (
 
 type CreateHandler struct {
 	RedisHandler *rejson.Handler
+	Signaler     chan os.Signal
 }
 
 func (c *CreateHandler) ServeHTTP(writer http.ResponseWriter, req *http.Request) {
@@ -25,20 +27,24 @@ func (c *CreateHandler) ServeHTTP(writer http.ResponseWriter, req *http.Request)
 		writer.WriteHeader(http.StatusInternalServerError)
 		//We will implement a standard json response for now just return plain text
 		writer.Write([]byte("error parsing json"))
+		defer func() {
+			c.Signaler <- os.Interrupt
+		}()
 		return
 	}
 
 	key := fmt.Sprintf("%s:%s", userDetails.Username, userDetails.Password)
-	fmt.Printf("Key => %s\n", key)
 
 	//For now just user username+password as a key
 	_, err := c.RedisHandler.JSONGet(key, ".")
 	if err != nil {
-		fmt.Printf("error mess => %s\n", err.Error())
 
 		if err.Error() != "redis: nil" {
 			writer.WriteHeader(http.StatusInternalServerError)
 			writer.Write([]byte(fmt.Sprintf("Error has occured => %s\n", err.Error())))
+			defer func() {
+				c.Signaler <- os.Interrupt
+			}()
 			return
 		}
 
@@ -48,12 +54,9 @@ func (c *CreateHandler) ServeHTTP(writer http.ResponseWriter, req *http.Request)
 			Password:  userDetails.Password,
 			CreatedAt: time.Now().Format("02 Jan 2006 15:04:05"),
 			Role:      "user",
-			Wins:      0,
 		}
 
 		c.RedisHandler.JSONSet(key, ".", newUser)
-
-		fmt.Println("Stored user json in redis")
 
 		jsonBytes, _ := json.Marshal(newUser)
 
