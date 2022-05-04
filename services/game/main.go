@@ -8,10 +8,6 @@ import (
 
 func main() {
 	game := game.InitGame()
-	val := <-game.Termination
-	if val == 0 {
-		fmt.Printf("Graceful Shutdown")
-	} else {
-		fmt.Printf("Error has occured shutting down")
-	}
+	<-game.Termination
+	fmt.Println("SHUT DOWN SIGNAL RECEIVED")
 }

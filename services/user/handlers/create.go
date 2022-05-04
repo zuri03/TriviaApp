@@ -60,11 +60,13 @@ func (c *CreateHandler) ServeHTTP(writer http.ResponseWriter, req *http.Request)
 
 		jsonBytes, _ := json.Marshal(newUser)
 
+		fmt.Println("saved user")
 		writer.WriteHeader(http.StatusAccepted)
 		writer.Write([]byte(jsonBytes))
 		return
 	}
 
+	fmt.Println("user already exist")
 	writer.WriteHeader(http.StatusBadRequest)
 	writer.Write([]byte(fmt.Sprintf("user %s already exists", userDetails.Username)))
 }

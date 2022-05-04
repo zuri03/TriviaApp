@@ -8,6 +8,6 @@ FROM alpine:latest
 RUN apk --no-cache add ca-certificates
 
 WORKDIR /go/src/github.com/zuri03/TriviaApp/
-COPY --from=builder /go/src/github.com/zuri03/user/build/Game ./main
+COPY --from=builder /go/src/github.com/zuri03/game/build/Game ./main
 EXPOSE 8080
 ENTRYPOINT [ "./main" ]

@@ -9,6 +9,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"os"
 )
 
 type phase int8
@@ -36,7 +37,7 @@ type game struct {
 	jserviceClient   jservice
 	bettingPotClient bettingPot
 	currentState     state
-	Termination      chan uint8
+	Termination      chan os.Signal
 }
 
 type observer struct {
@@ -115,7 +116,7 @@ func InitGame() *game {
 			Question: "",
 			Answer:   "",
 		},
-		Termination: make(chan uint8),
+		Termination: make(chan os.Signal, 1),
 	}
 	defer game.run() //may have to run this in a seperate go routine
 	initServer(&game)
@@ -142,10 +143,12 @@ func (g *game) run() {
 			case 4:
 				nextRound, err = g.startPostRound()
 			default:
-				//Throw an error here
+				g.Termination <- os.Interrupt
+				return
 			}
 			if err != nil {
-				//Handle error
+				g.Termination <- os.Interrupt
+				return
 			}
 			fmt.Println("FINISHED PHASE")
 		}

@@ -5,3 +5,6 @@ build-web:
 build-game:
 	cd services/game && \
 	docker build . -t game -f ./services/game
+
+test-go:
+	go test ./...
