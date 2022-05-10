@@ -1,6 +1,7 @@
 package server
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net/http"
@@ -27,9 +28,17 @@ func InstantiateRedisDBClientHandler() *rejson.Handler {
 
 func InitServer(signaler chan os.Signal) {
 
-	rejsonRedisHandler := InstantiateRedisDBClientHandler()
+	//rejsonRedisHandler := InstantiateRedisDBClientHandler()
 
-	userRouter := router.InitRouter(rejsonRedisHandler, signaler)
+	redisDBClient := redis.NewClient(&redis.Options{
+		Addr:     "redis:6379",
+		Password: "",
+		DB:       0,
+	})
+
+	fmt.Printf("init : %t\n", redisDBClient == nil)
+	ctx := context.Background()
+	userRouter := router.InitRouter(redisDBClient, signaler, ctx)
 
 	//http.Handle("/user", &handlers.CreateHandler{RedisHandler: rejsonRedisHandler})
 	go func() {

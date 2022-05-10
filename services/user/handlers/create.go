@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -8,13 +9,15 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/nitishm/go-rejson/v4"
+	//"github.com/nitishm/go-rejson/v4"
+	"github.com/go-redis/redis/v8"
 	"github.com/zuri03/user/models"
 )
 
 type CreateHandler struct {
-	RedisHandler *rejson.Handler
+	RedisHandler *redis.Client
 	Signaler     chan os.Signal
+	Ctx          context.Context
 }
 
 func (c *CreateHandler) ServeHTTP(writer http.ResponseWriter, req *http.Request) {
@@ -33,10 +36,21 @@ func (c *CreateHandler) ServeHTTP(writer http.ResponseWriter, req *http.Request)
 		return
 	}
 
+	if userDetails.Username == "" || userDetails.Password == "" {
+		writer.WriteHeader(http.StatusBadRequest)
+		writer.Write([]byte("Missing username or password"))
+		return
+	}
+
 	key := fmt.Sprintf("%s:%s", userDetails.Username, userDetails.Password)
 
 	//For now just user username+password as a key
-	_, err := c.RedisHandler.JSONGet(key, ".")
+	//_, err := c.RedisHandler.JSONGet(key, ".")
+	//Add context to the handler
+	cmd := c.RedisHandler.Get(c.Ctx, key)
+	fmt.Printf("got command : %+v\n", cmd)
+	fmt.Printf("got command : %t\n", cmd == nil)
+	_, err := cmd.Result()
 	if err != nil {
 
 		if err.Error() != "redis: nil" {
@@ -56,13 +70,20 @@ func (c *CreateHandler) ServeHTTP(writer http.ResponseWriter, req *http.Request)
 			Role:      "user",
 		}
 
-		c.RedisHandler.JSONSet(key, ".", newUser)
-
+		//c.RedisHandler.JSONSet(key, ".", newUser)
 		jsonBytes, _ := json.Marshal(newUser)
+		fmt.Printf("About to set: %s\n", string(jsonBytes))
+		err := c.RedisHandler.Set(c.Ctx, key, string(jsonBytes), 0).Err()
+
+		if err != nil {
+			fmt.Printf("error adding json: %s\n", err.Error())
+			writer.WriteHeader(http.StatusInternalServerError)
+			writer.Write([]byte("error"))
+			return
+		}
 
 		fmt.Println("saved user")
-		writer.WriteHeader(http.StatusAccepted)
-		writer.Write([]byte(jsonBytes))
+		writer.Write(jsonBytes)
 		return
 	}
 

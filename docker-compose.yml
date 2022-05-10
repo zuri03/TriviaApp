@@ -1,41 +1,17 @@
 version: '3'
 services:
   redis:
-    image: redislabs/rejson:latest
+    image: redis:latest
     ports:
      - '6379:6379'
   user:
     image: trivia/user
     build: 
       context: ./services/user
-      dockerfile: ./dockerfile
-    ports:
-      - '8081:8081'
-  web:
-    image: trivia/web
-    build: './services/web'
-    ports:
-      - '3000:3000'
-  betting:
-    image: trivia/betting
-    build: './services/betting'
-    ports:
-      - '8000:8000'
-    depends_on:
-      blockchain:
-        condition: service_started
-  blockchain:
-    image: ganache
-    build: './ganache'
-    ports:
-      - '8545:8545'
-  game:
-    image: trivia/game
-    build: 
-      context: ./services/game
       dockerfile: ./Dockerfile
     ports:
-      - '8080:8080'
+      - '8081:8081'
+  
 
   
 
